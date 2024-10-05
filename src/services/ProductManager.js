@@ -72,4 +72,13 @@ export default class ProductManager{
         return this.products.find(product => product.id === id)
     }
 
+    delete(id) {
+        const productIndex = this.products.findIndex(product => product.id === id);
+        if (productIndex === -1) return null;
+        const deletedProduct = this.products.splice(productIndex, 1);
+        this.saveToFile();
+
+        return deletedProduct[0];
+    }
+
 }
