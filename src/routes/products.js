@@ -56,5 +56,25 @@ router.post('/', async (req, res) => {
     }
 })
 
+router.put('/:pid', async (req, res) => {
+    try {
+        const id = parseInt(req.params.pid);
+
+        if (Object.keys(req.body).length === 0) {
+            return res.status(400).json({ error: 'No se está enviando el producto a actualizar' });
+        }
+
+        const update = await productManager.update(id, req.body);
+        if (update) {
+            res.json(update);
+        } else {
+            res.status(404).json({ error: 'Producto no encontrado' });
+        }
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+
 
 export default router;
