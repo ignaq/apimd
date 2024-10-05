@@ -53,4 +53,8 @@ export default class ProductManager{
         return newProduct;
     }
 
+    getBydId(id){
+        return this.products.find(product => product.id === id)
+    }
+
 }
