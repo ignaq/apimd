@@ -53,6 +53,21 @@ export default class ProductManager{
         return newProduct;
     }
 
+    update(id, updatedValue) {
+        const productIndex = this.products.findIndex(product => product.id === id);
+        if (productIndex === -1) return null;
+
+        const updated = {
+            ...this.products[productIndex],
+            ...updatedValue,
+            id: this.products[productIndex].id,
+        };
+        this.products[productIndex] = updated;
+        this.saveToFile();
+        return updated;
+    }
+
+
     getBydId(id){
         return this.products.find(product => product.id === id)
     }
