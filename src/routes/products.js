@@ -19,6 +19,25 @@ router.get('/', async (req, res) => {
 })
 
 
+router.get('/:id', async (req, res) => {
+    try {
+        const productId = parseInt(req.params.id)
+        const product = await productManager.getBydId(productId)
+
+        if (product) {
+            res.json(product)
+        } else {
+            res.status(404).json({ error: 'Producto no encontrado' })
+        }
+
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+
+// !! chequear status 
+
 
 router.post('/', async (req, res) => {
     try {
