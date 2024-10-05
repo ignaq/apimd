@@ -16,7 +16,7 @@ export default class ProductManager{
             const data = await fs.readFile(filePath, 'utf-8')
             this.products = JSON.parse(data)
         } catch (error) {
-            console.log('Todavia no se crearon productos')
+            console.log(error)
             this.products = []
         }
     }
@@ -41,9 +41,7 @@ export default class ProductManager{
             description: product.description, 
             status: product.status,
             title: product.title,
-            description: product.description,
             code: product.code,
-            price: product.price,
             stock: product.stock,
             category: product.category,
             thumbnails: product.thumbnails,
