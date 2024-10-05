@@ -15,8 +15,8 @@ export default class CartManager{
         try {
             const data = await fs.readFile(filePath, 'utf-8')
             this.carts = JSON.parse(data)
-        } catch (error) {
-            console.log('Todavia no se crearon carritos')
+        } catch (e) {
+            console.log(e)
             this.carts = []
         }
     }
@@ -33,6 +33,10 @@ export default class CartManager{
         this.carts.push(newCart);
         this.saveToFile();
         return newCart;
+    }
+
+    getBydId(id){
+        return this.carts.find(carts => carts.id === id)
     }
 
 }

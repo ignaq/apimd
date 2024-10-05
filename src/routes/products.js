@@ -19,9 +19,9 @@ router.get('/', async (req, res) => {
 })
 
 
-router.get('/:id', async (req, res) => {
+router.get('/:pid', async (req, res) => {
     try {
-        const productId = parseInt(req.params.id)
+        const productId = parseInt(req.params.pid)
         const product = await productManager.getBydId(productId)
 
         if (product) {
