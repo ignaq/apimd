@@ -127,5 +127,83 @@
       "http://ejemplo.com/9.png",
       "http://ejemplo.com/image33.png"
     ]
+  },
+  {
+    "id": 11,
+    "price": 20.4,
+    "description": "Este es un producto de prueba para testear la funcionalidad 9.",
+    "status": "",
+    "title": "Título del Producto 9",
+    "code": "PROD-008",
+    "stock": 20,
+    "category": "Categoría de Ejemplo 9",
+    "thumbnails": [
+      "http://ejemplo.com/9.png",
+      "http://ejemplo.com/image33.png"
+    ]
+  },
+  {
+    "id": 12,
+    "price": 20.4,
+    "description": "Este es un producto de prueba para testear la funcionalidad 9.",
+    "status": "",
+    "title": "Título del Producto 9",
+    "code": "PROD-008",
+    "stock": 20,
+    "category": "Categoría de Ejemplo 9",
+    "thumbnails": [
+      "http://ejemplo.com/9.png",
+      "http://ejemplo.com/image33.png"
+    ]
+  },
+  {
+    "id": 13,
+    "price": 20.4,
+    "description": "Este es un producto de prueba para testear la funcionalidad 9.",
+    "status": "",
+    "title": "Título del Producto 10",
+    "code": "PROD-008",
+    "stock": 20,
+    "category": "Categoría de Ejemplo 9",
+    "thumbnails": [
+      "http://ejemplo.com/9.png",
+      "http://ejemplo.com/image33.png"
+    ]
+  },
+  {
+    "id": 16,
+    "price": 3434,
+    "description": "3434",
+    "status": true,
+    "title": "434",
+    "code": "3434",
+    "stock": 3434,
+    "category": "3434",
+    "thumbnails": []
+  },
+  {
+    "id": 19,
+    "price": 254,
+    "description": "ejemplo",
+    "status": true,
+    "title": "tituloejemplo",
+    "code": "3434",
+    "stock": 1,
+    "category": "22",
+    "thumbnails": []
+  },
+  {
+    "id": 20,
+    "price": 20.99,
+    "description": "Este es un producto de prueba para testear la funcionalidad 9.",
+    "status": "",
+    "title": "nuevo producto",
+    "code": "PROD-008",
+    "stock": 20,
+    "category": "Categoría de Ejemplo 9",
+    "thumbnails": [
+      "http://ejemplo.com/9.png",
+      "http://ejemplo.com/image33.png"
+    ]
   }
 ]

@@ -49,6 +49,8 @@ router.post('/', async (req, res) => {
         }
       
         const product = await productManager.add({ title, description, code, price, stock, category, thumbnails, status })
+        const products = await productManager.getAll()
+        req.io.emit('productList', products);
         res.status(201).json(product)
     } catch (error) {
         console.error(error);
@@ -66,6 +68,8 @@ router.put('/:pid', async (req, res) => {
 
         const update = await productManager.update(id, req.body);
         if (update) {
+            const products = await productManager.getAll()
+            req.io.emit('productList', products);
             res.json(update);
         } else {
             res.status(404).json({ error: 'Producto no encontrado' });
@@ -80,6 +84,8 @@ router.delete('/:pid', async (req, res) => {
         const id = parseInt(req.params.pid);
         const deletedProduct = productManager.delete(id);
         if (deletedProduct) {
+            const products = await productManager.getAll()
+            req.io.emit('productList', products);
             res.json("Producto eliminado con éxito");
         } else {
             res.status(404).json({ error: 'Producto no encontrado' });
