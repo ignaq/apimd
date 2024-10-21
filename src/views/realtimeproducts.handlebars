@@ -1,0 +1,117 @@
+
+<h2>Agregar un nuevo producto</h2>
+<form id="add-product-form">
+    <label for="title">Título:</label>
+    <input type="text" id="title" placeholder="Título" required>
+    
+    <label for="price">Precio:</label>
+    <input type="number" id="price" placeholder="Precio" step="0.01" required>
+    
+    <label for="description">Descripción:</label>
+    <textarea id="description" placeholder="Descripción" required></textarea>
+    
+    <label for="status">Estado:</label>
+    <select id="status">
+        <option value="true">Activo</option>
+        <option value="false">Inactivo</option>
+    </select>
+    
+    <label for="code">Código:</label>
+    <input type="text" id="code" placeholder="Código del Producto" required>
+    
+    <label for="stock">Stock:</label>
+    <input type="number" id="stock" placeholder="Stock" required>
+    
+    <label for="category">Categoría:</label>
+    <input type="text" id="category" placeholder="Categoría" required>
+    
+    <label for="thumbnails">Thumbnails (URL):</label>
+    <input type="url" id="thumbnail" placeholder="URL de la imagen">
+
+    
+    <button type="submit">Agregar Producto</button>
+</form>
+
+<h1>Lista de Productos en Tiempo Real</h1>
+<ul id="product-list">
+        {{#each products}}
+        <li>{{title}} - ${{price}}</li>
+        {{/each}}
+</ul>
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script >
+
+const socket = io();
+// Escuchar cuando se envía el formulario
+const form = document.getElementById('add-product-form');
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    // Obtener los valores de los campos
+    const title = document.getElementById('title').value;
+    const price = parseFloat(document.getElementById('price').value);
+    const description = document.getElementById('description').value;
+    const status = document.getElementById('status').value === 'true';  // Convertir a booleano
+    const code = document.getElementById('code').value;
+    const stock = parseInt(document.getElementById('stock').value);
+    const category = document.getElementById('category').value;
+    const thumbnails = [
+        document.getElementById('thumbnail').value,
+    ];
+
+    
+    const producto = {
+        "title": title,
+        "name": title,
+        "description": description,
+        "price": price,
+        "category": category,
+        "stock": stock,
+        "code": code,
+        "status": status,
+        "thumbnails": [
+        ]
+    };
+
+    console.log(producto)
+    
+    fetch('/api/products', {
+        method: 'POST', 
+        headers: {
+            'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify(producto) 
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la creación del producto');
+            }
+            return response.json(); 
+        })
+        .then(data => {
+            console.log('Producto creado exitosamente:', data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+
+    // Limpiar el formulario después de enviarlo
+    form.reset();
+
+    socket.on('productList', (products) => {
+    const productList = document.getElementById('product-list');
+   
+    productList.innerHTML = '';
+    products.forEach(product => {
+        const li = document.createElement('li');
+        li.textContent = `${product.title} - $${product.price}`;
+        productList.appendChild(li);
+    });
+});
+   
+
+});
+
+</script>
