@@ -10,6 +10,11 @@ import routerView from './routes/views.js'
 
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import mongoose from 'mongoose';
+import users from './routes/user.js'
+
+
+
 
 const app = express();
 
@@ -38,7 +43,24 @@ app.use("/api/carts", carts)
 
 app.use('/', routerView)
 
+//USER DEMO
+app.use('/users', users)
+
+
 const PORT = 8080;
 server.listen(PORT, () => {
     console.log(`Server listening on port: ${PORT}`)
 })
+
+const pathdb = 'mongodb+srv://jignacioquintero:ZQUsKR3VWYR8HTNF@cluster0.3x9ne.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+
+const connectMongo = async () => {
+  try {
+    await mongoose.connect(pathdb);
+    console.log('Conectado a mongoose');
+  } catch (error) {
+    console.log(error)
+    
+  }
+}
+connectMongo()
