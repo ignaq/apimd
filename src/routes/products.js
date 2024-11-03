@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import ProductManager from '../services/ProductManager.js';
 import { check } from '../utils/checkProducts.js';
+import { productModel } from '../models/product.js';
 
 const router = Router()
 
@@ -10,36 +11,34 @@ const productManager = new ProductManager()
 router.get('/', async (req, res) => {
 
     try {
-        const limit = req.query.limit ? parseInt(req.query.limit) : undefined;
-        const products = await productManager.getAll(limit);
-        res.json(products);
+        const products = await productModel.find();
+        res.json({results: "success", payload: products});
     } catch (error) {
         console.log(error)
     }
 })
 
 
-router.get('/:pid', async (req, res) => {
-    try {
-        const productId = parseInt(req.params.pid)
-        const product = await productManager.getBydId(productId)
+// router.get('/:pid', async (req, res) => {
+//     try {
+//         const productId = parseInt(req.params.pid)
+//         const product = await productManager.getBydId(productId)
 
-        if (product) {
-            res.json(product)
-        } else {
-            res.status(404).json({ error: 'Producto no encontrado' })
-        }
+//         if (product) {
+//             res.json(product)
+//         } else {
+//             res.status(404).json({ error: 'Producto no encontrado' })
+//         }
 
-    } catch (error) {
-        console.log(error);
-    }
-})
+//     } catch (error) {
+//         console.log(error);
+//     }
+// })
 
 
 // !! chequear status 
 
-
-router.post('/', async (req, res) => {
+router.post('/', async (req,res) => {
     try {
         const { title, description, code, price, stock, category,  thumbnails = [], status = true } = req.body;
         const errors = check({ title, description, code, price, stock, category });
@@ -47,51 +46,42 @@ router.post('/', async (req, res) => {
         if (errors.length > 0) {
             return res.status(400).json({ errors });
         }
-      
-        const product = await productManager.add({ title, description, code, price, stock, category, thumbnails, status })
-        const products = await productManager.getAll()
-        req.io.emit('productList', products);
-        res.status(201).json(product)
+        const product = await productModel.create({title, description, code, price, stock, category,  thumbnails, status})
+        res.status(201).send(product)
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Error en la creación del producto' });
+        console.log(error)
+        res.status(500).json({message: 'Error al crear el producto'})
     }
 })
 
-router.put('/:pid', async (req, res) => {
+router.put('/:id', async (req, res) => {
     try {
-        const id = parseInt(req.params.pid);
-
         if (Object.keys(req.body).length === 0) {
             return res.status(400).json({ error: 'No se está enviando el producto a actualizar' });
         }
-
-        const update = await productManager.update(id, req.body);
-        if (update) {
-            const products = await productManager.getAll()
-            req.io.emit('productList', products);
-            res.json(update);
-        } else {
-            res.status(404).json({ error: 'Producto no encontrado' });
+        if (!req.params.id) {
+            return res.status(400).json({ error: 'No se está enviando el id del producto a actualizar' });
         }
+        const productUpdate = req.body;
+
+        const update = await productModel.updateOne({_id: req.params.id}, productUpdate);
+        res.status(202).send(update)
     } catch (error) {
-        console.log(error);
+        console.error(error)
+        res.status(500).json({message: "Error al actualizar"})
     }
 });
 
-router.delete('/:pid', async (req, res) => {
+router.delete('/:id', async (req, res) => {
     try {
-        const id = parseInt(req.params.pid);
-        const deletedProduct = productManager.delete(id);
-        if (deletedProduct) {
-            const products = await productManager.getAll()
-            req.io.emit('productList', products);
+        const deleteProduct = await productModel.deleteOne({_id: req.params.id})
+        if (deleteProduct) {
             res.json("Producto eliminado con éxito");
         } else {
             res.status(404).json({ error: 'Producto no encontrado' });
         }
     } catch (error) {
-        console.log(error);
+        res.status(404).json({ error: 'Error al eliminar el producto' });
     }
 });
 

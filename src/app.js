@@ -2,7 +2,7 @@ import express from 'express'
 import handlebars  from 'express-handlebars';
 import __dirnameView from './utils/dir-util.js'
 import cors from 'cors'
-
+import mongoose from 'mongoose'
 
 import products from './routes/products.js'
 import carts from './routes/carts.js'
@@ -42,3 +42,16 @@ const PORT = 8080;
 server.listen(PORT, () => {
     console.log(`Server listening on port: ${PORT}`)
 })
+
+
+const pathdb = 'mongodb+srv://jignacioquintero:ZQUsKR3VWYR8HTNF@cluster0.3x9ne.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+
+const connectMongo = async () => {
+  try {
+    await mongoose.connect(pathdb);
+    console.log('Conectado a mongoose');
+  } catch (error) {
+    console.log(error)
+  }
+}
+connectMongo()
