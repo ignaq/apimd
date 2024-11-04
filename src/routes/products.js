@@ -5,14 +5,13 @@ import { productModel } from '../models/product.js';
 
 const router = Router()
 
-const productManager = new ProductManager()
-
+// const productManager = new ProductManager()
 
 router.get('/', async (req, res) => {
 
     try {
         const products = await productModel.find();
-        res.json({results: "success", payload: products});
+        res.json({status: "success", payload: products});
     } catch (error) {
         console.log(error)
     }
@@ -50,17 +49,17 @@ router.post('/', async (req,res) => {
         res.status(201).send(product)
     } catch (error) {
         console.log(error)
-        res.status(500).json({message: 'Error al crear el producto'})
+        res.status(500).json({status: "Error", error: 'Error al crear el producto'})
     }
 })
 
 router.put('/:id', async (req, res) => {
     try {
         if (Object.keys(req.body).length === 0) {
-            return res.status(400).json({ error: 'No se está enviando el producto a actualizar' });
+            return res.status(400).json({status: "Error", error: 'No se está enviando el producto a actualizar' });
         }
         if (!req.params.id) {
-            return res.status(400).json({ error: 'No se está enviando el id del producto a actualizar' });
+            return res.status(400).json({status: "Error", error: 'No se está enviando el id del producto a actualizar' });
         }
         const productUpdate = req.body;
 
@@ -68,7 +67,7 @@ router.put('/:id', async (req, res) => {
         res.status(202).send(update)
     } catch (error) {
         console.error(error)
-        res.status(500).json({message: "Error al actualizar"})
+        res.status(500).json({status: "Error", error: "Error al actualizar"})
     }
 });
 
@@ -76,12 +75,12 @@ router.delete('/:id', async (req, res) => {
     try {
         const deleteProduct = await productModel.deleteOne({_id: req.params.id})
         if (deleteProduct) {
-            res.json("Producto eliminado con éxito");
+            res.json({status: "success", payload:"Producto eliminado con éxito"});
         } else {
-            res.status(404).json({ error: 'Producto no encontrado' });
+            res.status(404).json({status: "Error",  error: 'Producto no encontrado' });
         }
     } catch (error) {
-        res.status(404).json({ error: 'Error al eliminar el producto' });
+        res.status(404).json({status: "Error", error: 'Error al eliminar el producto' });
     }
 });
 
