@@ -1,40 +1,65 @@
 import { Router } from 'express'
-import ProductManager from '../services/ProductManager.js';
 import { check } from '../utils/checkProducts.js';
-import { productModel } from '../models/product.js';
+import { Product } from '../models/product.js';
+import { isValidObjectId } from 'mongoose';
 
 const router = Router()
 
-// const productManager = new ProductManager()
 
 router.get('/', async (req, res) => {
-
     try {
-        const products = await productModel.find();
-        res.json({status: "success", payload: products});
+        let page = parseInt(req.query.page);
+        let limit = parseInt(req.query.limit);
+        if (!page) page = 1;
+        if (!limit) limit = 10;
+      
+        const category = req.query.category || null;
+        const status = req.query.status || null;
+        const sort = req.query.sort;
+        
+        const query = {}
+
+        if (category) query.category = new RegExp(category, 'i');
+        if (status) query.status = status === 'true';
+
+        const sortOption = sort === 'asc' ? { price: 1 } : sort === 'desc' ? { price: -1 } : {};
+
+        const result = await Product.paginate(query, {
+            limit,
+            page,
+            sort: sortOption,
+        });
+
+        result.prevLink = result.hasPrevPage ? `http://localhost:8080/api/products?page=${result.prevPage}` : '';
+        result.nextLink = result.hasNextPage ? `http://localhost:8080/api/products?page=${result.nextPage}` : '';
+
+        result.isValid = !(page <= 0 || page > result.totalPages)
+    
+        res.json({ status: "success", payload: result });
     } catch (error) {
-        console.log(error)
+        console.error(error);
+        res.status(500).json({ status: "error", message: "Error al obtener los productos" });
+    }
+});
+
+
+router.get('/:pid', async (req, res) => {
+    try {
+        if(!isValidObjectId(req.params.pid)){
+            res.status(404).json({ status: "error", message: "id inválido"})
+        }
+        const product = await Product.findById(req.params.pid)
+
+        if (product) {
+            res.json(product)
+        } else {
+            res.status(404).json({ status: "error", message: 'Producto no encontrado' })
+        }
+
+    } catch (error) {
+        console.log(error);
     }
 })
-
-
-// router.get('/:pid', async (req, res) => {
-//     try {
-//         const productId = parseInt(req.params.pid)
-//         const product = await productManager.getBydId(productId)
-
-//         if (product) {
-//             res.json(product)
-//         } else {
-//             res.status(404).json({ error: 'Producto no encontrado' })
-//         }
-
-//     } catch (error) {
-//         console.log(error);
-//     }
-// })
-
-
 // !! chequear status 
 
 router.post('/', async (req,res) => {
@@ -45,7 +70,7 @@ router.post('/', async (req,res) => {
         if (errors.length > 0) {
             return res.status(400).json({ errors });
         }
-        const product = await productModel.create({title, description, code, price, stock, category,  thumbnails, status})
+        const product = await Product.create({title, description, code, price, stock, category,  thumbnails, status})
         res.status(201).send(product)
     } catch (error) {
         console.log(error)
@@ -63,7 +88,7 @@ router.put('/:id', async (req, res) => {
         }
         const productUpdate = req.body;
 
-        const update = await productModel.updateOne({_id: req.params.id}, productUpdate);
+        const update = await Product.updateOne({_id: req.params.id}, productUpdate);
         res.status(202).send(update)
     } catch (error) {
         console.error(error)
@@ -73,7 +98,7 @@ router.put('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
     try {
-        const deleteProduct = await productModel.deleteOne({_id: req.params.id})
+        const deleteProduct = await Product.deleteOne({_id: req.params.id})
         if (deleteProduct) {
             res.json({status: "success", payload:"Producto eliminado con éxito"});
         } else {
