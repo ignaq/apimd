@@ -87,6 +87,26 @@ router.post('/:cid/products/:pid', async (req, res) => {
         res.status(500).json({ status: 'error', message: 'Error al agregar producto al carrito' });
     }
 });
+//eliminar todos los productos
+router.delete('/:cid', async (req, res) => {
+    const { cid } = req.params;
 
+    try {
+        const cartExists = await cartModel.findById(cid);
+        if (!cartExists) {
+            return res.status(404).json({ status: 'error', message: 'Carrito no encontrado' });
+        }
+        const updatedCart = await cartModel.findByIdAndUpdate(
+            cid,
+            { $set: { products: [] } }, 
+            { new: true, useFindAndModify: false }
+        ).populate('products');
+
+        res.json({ status: 'success', payload: updatedCart });
+    } catch (error) {
+        console.error('Error al eliminar todos los productos del carrito:', error);
+        res.status(500).json({ status: 'error', message: 'Error al eliminar todos los productos del carrito' });
+    }
+});
 
 export default router;
