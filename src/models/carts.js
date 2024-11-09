@@ -3,21 +3,16 @@ import mongoose from "mongoose";
 const cartCollection = 'carts';
 
 const cartSchema = new mongoose.Schema({
-    products: {
-        type: [
-          {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'products',
-            required: true
-          }
-        ],
-        required: true
-        // validate: [arrayLimit, '{PATH} debe contener al menos un producto']
-      }
+  products: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'products'
+}],
+default: []
+
 })
 
-function arrayLimit(val) {
-    return val.length > 0;
-}
 
+// cartSchema.pre('find', function () {
+//   this.populate("products.product");
+// });
 export const cartModel = mongoose.model(cartCollection, cartSchema);
