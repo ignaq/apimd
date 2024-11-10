@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { Product } from '../models/product.js';
+import { cartModel } from '../models/carts.js';
 
 const router = Router();
 
@@ -43,14 +44,12 @@ router.get('/products', async (req, res) => {
 
 })
 
-// router.get('/realtimeproducts', async (req, res) => {
-//     try {
-//     const products = await manager.getAll(); 
-//     res.render('realTimeProducts', { products }); 
-//     } catch (error) {
-//     console.error('Error al obtener productos:', error);
-//     res.status(500).send('Error al obtener productos');
-//     }
-// });
+router.get('/cart/:cid', async (req, res) => {
+
+      let cid = req.params.cid
+      let cartProduct = await cartModel.findById({ _id: cid}).populate("products").lean();
+      console.log(cartProduct.products)
+      res.render('cart', {products: cartProduct.products})
+})
 
 export default router;

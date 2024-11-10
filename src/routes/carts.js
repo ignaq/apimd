@@ -14,7 +14,7 @@ const productManager = new ProductManager();
 router.get('/', async (req, res) => {
 
     try {
-        const carts = await cartModel.find();
+        const carts = await cartModel.find().populate('products');
         res.json({status: "success", payload: carts});
     } catch (error) {
         console.log(error)
@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
 
 router.get('/:cid', async (req, res) => {
     try {
-        let cartProduct = await cartModel.find({ _id: req.params.cid }).populate("products.product");
+        let cartProduct = await cartModel.find({ _id: req.params.cid }).populate("products");
         res.json({status: "success", payload: cartProduct});
     } catch (error) {
         console.log(error)
